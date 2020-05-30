@@ -16,19 +16,29 @@ class _ConfiguracoesState extends State<Configuracoes> {
       ),
       body: Column(
         children: <Widget>[
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(top: 10),
-              child: Switch(
-                value: isSwitched,
-                onChanged: (value) {
-                  setState(() {
-                    isSwitched = value;
-                  });
-                },
-                activeTrackColor: Colors.lightGreenAccent,
-                activeColor: Colors.green,
-              ),
+          ListTile(
+            title: Text('Receber notificações'),
+            //subtitle: Text('Receba alertas de novas ocorrencias na suas regiões favoritas'),
+            trailing: Switch(
+              value: true,
+              onChanged: (val) {},
+            ),
+          ),
+          ListTile(
+            title: Text('Receber alerta por email'),
+            //subtitle: Text('Hide and show items'),
+            trailing: Switch(
+              value: true,
+              onChanged: (val) {},
+            ),
+          ),
+          ListTile(
+            title: Text('Receber alertas antigos'),
+            //subtitle: Text('Hide and show items'),
+
+            trailing: Switch(
+              value: true,
+              onChanged: (val) {},
             ),
           ),
           Container(

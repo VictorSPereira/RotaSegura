@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rotasegura/custom/social_icons.dart';
+import 'package:rotasegura/helpers/connect.dart';
 import 'package:rotasegura/views/SuasContribuicoes.dart';
 import 'package:rotasegura/views/Configuracoes.dart';
 import 'package:rotasegura/views/locaisInteresse.dart';
+import 'package:rotasegura/views/indicadores.dart';
 import 'package:rotasegura/views/opcoesCadastroUsuario.dart';
 import 'package:rotasegura/views/novaOcorrencia.dart';
 import 'package:rotasegura/views/perfil.dart';
@@ -70,6 +73,7 @@ class _HomeState extends State<Home> {
                           address: _lastMapAddress,
                           coordinates: _lastMapPosition,
                         ));
+                    _maps(); //aqui
                   },
                   tooltip: 'Adicionar Delito',
                   child: const Icon(Icons.add),
@@ -152,7 +156,7 @@ class _HomeState extends State<Home> {
   Widget drawerMenu() {
     return Drawer(child: _logado ? drawerMenuPrincipal() : drawerLogin());
   }
-
+var teste;
   Widget drawerLogin() {
     return SingleChildScrollView(
       child: Column(
@@ -189,8 +193,12 @@ class _HomeState extends State<Home> {
                     color: Colors.orange,
                     child: Text("Entrar"),
                     onPressed: () {
-                      setState(() {
-                        _logado = true;
+                     setState(() {
+                        teste = login();
+                        AlertDialog(
+                          title: Text("Promoção Imperdivel"),
+                          content: Text(teste),
+                        );
                       });
                     },
                   ),
@@ -297,8 +305,21 @@ class _HomeState extends State<Home> {
           onTap: () {
             navigatorTo(context: context, to: Perfil());
           }),
-      itemMenuPrincipal(title: "Indicadores", icon: Icons.insert_chart),
-      itemMenuPrincipal(title: "Sair", icon: Icons.exit_to_app),
+      itemMenuPrincipal(
+          title: "Indicadores",
+          icon: Icons.insert_chart,
+          onTap: () {
+            navigatorTo(context: context, to: Indicadores());
+          }),
+      itemMenuPrincipal(
+        title: "Sair",
+        icon: Icons.exit_to_app,
+        onTap: () {
+          setState(() {
+            _logado = false;
+          });
+        },
+      ),
     ]);
   }
 
@@ -452,15 +473,12 @@ class _HomeState extends State<Home> {
     //_handlePressButton();
   }
   Widget _listDelito() {
-    return ListView.separated(
-        scrollDirection: Axis.vertical,
-        separatorBuilder: (context, index) => Divider(
-              height: 12,
-              color: Colors.transparent,
-            ),
-        itemCount: globals.points.length,
-        itemBuilder: slidableBuild);
-    
+    return ListTile(
+      contentPadding: EdgeInsets.fromLTRB(8.0, 0.0, 64.0, 0.0),
+      leading: CircleAvatar(child: Text("teste")),
+      title: Text("teste", textAlign: TextAlign.left),
+      subtitle: Text("teste", textAlign: TextAlign.left),
+    );
   }
 
   Widget slidableBuild(BuildContext context, int index) {

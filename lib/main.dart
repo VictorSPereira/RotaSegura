@@ -14,3 +14,4 @@ class MyApp extends StatelessWidget {
   }
 }
 
+//indicadores e lista
