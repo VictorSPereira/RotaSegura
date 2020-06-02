@@ -11,14 +11,14 @@ class CadastroUsuario extends StatefulWidget {
 class _CadastroUsuarioState extends State<CadastroUsuario> {
   final GlobalKey<FormState> _keyformCadastroUsuario = GlobalKey<FormState>();
   TextEditingController _controllerNome;
-  TextEditingController _controllerSobrenome;
-  TextEditingController _controllerDataNascimento;
-  TextEditingController _controllerCpf;
-  TextEditingController _controllerCep;
-  TextEditingController _controllerEmail;
-  TextEditingController _controllerConfirmeEmail;
-  TextEditingController _controllerSenha;
-  TextEditingController _controllerConfirmeSenha;
+  var _controllerSobrenome = TextEditingController();
+  var _controllerDataNascimento = TextEditingController();
+  var _controllerCpf = TextEditingController();
+  var _controllerCep = TextEditingController();
+  var _controllerEmail = TextEditingController();
+  var _controllerConfirmeEmail = TextEditingController();
+  var _controllerSenha = TextEditingController();
+  var _controllerConfirmeSenha = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +72,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
             CustomTextFormField.textFormField(
                 controller: _controllerCpf, label: "CPF"),
             CustomTextFormField.textformCepField(
-              controller: _controllerCep, label: "CEP"),
+                controller: _controllerCep, label: "CEP"),
             CustomTextFormField.textFormField(
                 controller: _controllerEmail,
                 label: "E-mail",
@@ -89,20 +89,34 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                 controller: _controllerConfirmeSenha,
                 label: "Confirme a senha",
                 obscureText: true),
-                RaisedButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13.0)),
-                    color: Colors.orange,
-                    child: Text("Cadastrar"),
-                    onPressed: () {
-                        print('IAI');        
-                        StateMachine.registerUser();
-                    },
-                  )
+            RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13.0)),
+              color: Colors.orange,
+              child: Text("Cadastrar"),
+              onPressed: () {
+                print('chamando funcao sql');
+                String nome = _controllerNome.text;
+                String sobre = _controllerSobrenome.text;
+                String data = _controllerDataNascimento.text;
+                String cpf = _controllerCpf.text;
+                String cep = _controllerCep.text;
+                String email = _controllerEmail.text;
+                String cEmail = _controllerConfirmeEmail.text;
+                String senha = _controllerSenha.text;
+                String cSenha = _controllerConfirmeSenha.text;
+                print(nome);
+                if(email == cEmail && senha == cSenha){
+                  nome = nome + ' ' + sobre;
+                  data ='30/04/1995';
+                  StateMachine.registerUser(nome, sobre, data, cpf, cep, email, senha);
+                }
+                
+              },
+            )
           ],
         ),
       ),
     );
   }
 }
-

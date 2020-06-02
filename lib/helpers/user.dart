@@ -26,7 +26,7 @@ class User {
     this.status = status;
     this.photo = photo;
   }
-
+/*
   Results insertUserDB() {
    StateMachine.connectDB();
    try{
@@ -41,5 +41,5 @@ class User {
    print(result);
    return result;
   }
-
+*/
 }

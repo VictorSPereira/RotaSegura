@@ -28,10 +28,7 @@ packages:
       name: boolean_selector
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< HEAD
     version: "2.0.0"
-=======
-    version: "1.0.5"
   bubble:
     dependency: "direct main"
     description:
@@ -39,7 +36,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.9+1"
->>>>>>> 1c9af151ce8476f2ebbf0733de9c2d548d058fce
   charcode:
     dependency: transitive
     description:
@@ -93,7 +89,7 @@ packages:
       name: flutter_google_places
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.4"
+    version: "0.2.5"
   flutter_google_places_autocomplete:
     dependency: "direct main"
     description:
@@ -238,7 +234,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.23.1"
+    version: "0.24.1"
   sky_engine:
     dependency: transitive
     description: flutter

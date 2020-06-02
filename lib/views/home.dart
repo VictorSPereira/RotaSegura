@@ -1,4 +1,5 @@
 import 'dart:async';
+//import 'dart:html';
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -73,9 +74,8 @@ class _HomeState extends State<Home> {
                         to: NovaOcorrencia(
                           address: _lastMapAddress,
                           coordinates: _lastMapPosition,
-                        )
-                      );
-                      _maps();
+                        ));
+                    _maps();
                   },
                   tooltip: 'Adicionar Delito',
                   child: const Icon(Icons.add),
@@ -111,7 +111,9 @@ class _HomeState extends State<Home> {
   }
 
   Future _handleTap(LatLng point) async {
-    setState(() {_lastMapPosition = point;});
+    setState(() {
+      _lastMapPosition = point;
+    });
     StateMachine.selectDB();
     var res = await Geocoder.local.findAddressesFromCoordinates(
         Coordinates(_lastMapPosition.latitude, _lastMapPosition.longitude));
@@ -193,9 +195,11 @@ class _HomeState extends State<Home> {
                         borderRadius: BorderRadius.circular(13.0)),
                     color: Colors.orange,
                     child: Text("Entrar"),
+                    
                     onPressed: () {
+                     
                       setState(() {
-                        _logado = true;
+                      _logado = true;
                       });
                     },
                   ),
