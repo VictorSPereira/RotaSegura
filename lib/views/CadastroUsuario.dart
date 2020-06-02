@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rotasegura/helpers/stateMachine.dart';
+import 'package:rotasegura/helpers/user.dart';
 import 'package:rotasegura/widgets/CustomTextFormField.dart';
 
 class CadastroUsuario extends StatefulWidget {
@@ -12,6 +14,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   TextEditingController _controllerSobrenome;
   TextEditingController _controllerDataNascimento;
   TextEditingController _controllerCpf;
+  TextEditingController _controllerCep;
   TextEditingController _controllerEmail;
   TextEditingController _controllerConfirmeEmail;
   TextEditingController _controllerSenha;
@@ -68,7 +71,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                 label: "Data de nascimento"),
             CustomTextFormField.textFormField(
                 controller: _controllerCpf, label: "CPF"),
-            CustomTextFormField.textformCepField(controller: _controllerCpf),
+            CustomTextFormField.textformCepField(
+              controller: _controllerCep, label: "CEP"),
             CustomTextFormField.textFormField(
                 controller: _controllerEmail,
                 label: "E-mail",
@@ -91,9 +95,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                     color: Colors.orange,
                     child: Text("Cadastrar"),
                     onPressed: () {
-                      setState(() {
-                        
-                      });
+                        print('IAI');        
+                        StateMachine.registerUser();
                     },
                   )
           ],

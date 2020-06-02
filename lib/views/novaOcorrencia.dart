@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:rotasegura/views/home.dart';
 import 'package:rotasegura/widgets/CustomTextFormField.dart';
 import 'package:rotasegura/globals.dart' as globals;
 
@@ -117,26 +116,47 @@ class _NovaOcorrenciaState extends State<NovaOcorrencia> {
       ),
       color: Colors.green,
       onPressed: () {
-        _onAddMarkerButtonPressed();
-        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                title: Text("ATENÇÃO!"),
+                content: Text("Uma vez adicionada uma ocorrência, não poderá mais editá-la, tem certeza das informações cadastradas?"),
+                actions: [
+                  FlatButton(
+                    child: Text("Cancelar"),
+                    onPressed:  () {
+                       Navigator.of(context).pop();
+                    },
+                  ),
+                  FlatButton(
+                    child: Text("Confirmar"),
+                    onPressed:  () {
+                    _onAddMarkerButtonPressed();
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+          },
+        );
       },
     );
   }
+  
 addToGlobals() async {
   var res = await Geocoder.local.findAddressesFromCoordinates(Coordinates(widget.coordinates.latitude, widget.coordinates.longitude));
   globals.address.add(res.first);
 
-
   globals.points.add(Marker(
-      markerId: MarkerId(widget
-          .coordinates.toString()),
+      markerId: MarkerId(widget.coordinates.toString()),
       position: widget.coordinates,
       icon: BitmapDescriptor.defaultMarker,
       infoWindow: InfoWindow(
           title: _controllerTipo.text,
           snippet: _controllerDescricao.text
-      )
-
+      ),
   ));
 }
   void _onAddMarkerButtonPressed() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rotasegura/helpers/user.dart';
 
 
 class Register extends StatefulWidget {
@@ -7,7 +8,13 @@ class Register extends StatefulWidget {
 }
 
 class _Register extends State<Register> {
-
+TextEditingController textNomeController;
+TextEditingController textSobrenomeController;
+TextEditingController textDateNascController;
+TextEditingController textCPFController;
+TextEditingController textCEPController;
+TextEditingController textEmailController;
+TextEditingController textPasswordController;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -43,6 +50,7 @@ class _Register extends State<Register> {
             new Container(
               width: 370,
               child: new TextFormField(
+                controller: textNomeController,
                 decoration: new InputDecoration(
                   prefixIcon:  Icon(Icons.person_pin, size: 40.0, color: Colors.grey),
                   border: OutlineInputBorder(),
@@ -59,6 +67,7 @@ class _Register extends State<Register> {
             new Container(
               width: 370,
               child: new TextFormField(
+                controller: textSobrenomeController,
                 decoration: new InputDecoration(
                   border:  OutlineInputBorder(),
                 ),
@@ -70,6 +79,7 @@ class _Register extends State<Register> {
               width: 370,
               child:
               new TextFormField(
+                controller: textDateNascController,
                 decoration: new InputDecoration(
                   prefixIcon: Icon(Icons.date_range, size: 40.0, color: Colors.grey),
                   border: OutlineInputBorder(),
@@ -87,6 +97,7 @@ class _Register extends State<Register> {
               width: 370,
               child:
               new TextFormField(
+                controller: textCPFController,
                 decoration: new InputDecoration(
                   prefixIcon: Icon(Icons.chrome_reader_mode, size: 40.0, color: Colors.grey),
                   border: OutlineInputBorder(),
@@ -104,6 +115,7 @@ class _Register extends State<Register> {
               width: 370,
               child:
               new TextFormField(
+                controller: textEmailController,
                 decoration: new InputDecoration(
                   prefixIcon: Icon(Icons.email, size: 40.0, color: Colors.grey),
                   border: OutlineInputBorder(),
@@ -114,7 +126,7 @@ class _Register extends State<Register> {
             new Text.rich(
                 TextSpan(
                     text: "Confirmar E-mail ",
-                    children: <TextSpan> [TextSpan(text: "*",style: TextStyle(color: Colors.red))]
+                    children: <TextSpan> [TextSpan(text: "*",style: TextStyle(color: Colors.red))],
                 )
             ),
             new Container(
@@ -137,6 +149,7 @@ class _Register extends State<Register> {
               width: 370,
               child:
               new TextFormField(
+                controller: textPasswordController,
                 decoration: new InputDecoration(
                   prefixIcon: Icon(Icons.lock, size: 40.0, color: Colors.grey),
                   border: OutlineInputBorder(),
@@ -161,6 +174,7 @@ class _Register extends State<Register> {
 
             new SizedBox(height: 15.0),
 
+            new FlatButton(onPressed: (){}, child: Text("ttt")),
             new MaterialButton(
                 shape: RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(18.0),
@@ -172,7 +186,9 @@ class _Register extends State<Register> {
                 textColor: Colors.white,
                 disabledTextColor: Colors.white,
                 child: new Text('Cadastrar'),
-                onPressed: () {}
+                onPressed: () async {
+                
+                }
             )
           ],
         ));

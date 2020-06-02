@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rotasegura/custom/social_icons.dart';
-import 'package:rotasegura/helpers/connect.dart';
+import 'package:rotasegura/helpers/stateMachine.dart';
 import 'package:rotasegura/views/SuasContribuicoes.dart';
 import 'package:rotasegura/views/Configuracoes.dart';
 import 'package:rotasegura/views/locaisInteresse.dart';
@@ -53,6 +53,7 @@ class _HomeState extends State<Home> {
     _controllerSenha = TextEditingController();
 
     _lastMapPosition = LatLng(-22.8822874, -47.0564147);
+    StateMachine.connectDB();
     //_handleTap(_lastMapPosition);
   }
 
@@ -72,8 +73,9 @@ class _HomeState extends State<Home> {
                         to: NovaOcorrencia(
                           address: _lastMapAddress,
                           coordinates: _lastMapPosition,
-                        ));
-                    _maps(); //aqui
+                        )
+                      );
+                      _maps();
                   },
                   tooltip: 'Adicionar Delito',
                   child: const Icon(Icons.add),
@@ -90,6 +92,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget _maps() {
+    print("MAPOUUUUUUUUUU!");
     return SingleChildScrollView(
         child: Container(
       child: GoogleMap(
@@ -108,10 +111,8 @@ class _HomeState extends State<Home> {
   }
 
   Future _handleTap(LatLng point) async {
-    setState(() {
-      _lastMapPosition = point;
-    });
-
+    setState(() {_lastMapPosition = point;});
+    StateMachine.selectDB();
     var res = await Geocoder.local.findAddressesFromCoordinates(
         Coordinates(_lastMapPosition.latitude, _lastMapPosition.longitude));
     _lastMapAddress = res.first;
@@ -156,7 +157,7 @@ class _HomeState extends State<Home> {
   Widget drawerMenu() {
     return Drawer(child: _logado ? drawerMenuPrincipal() : drawerLogin());
   }
-var teste;
+
   Widget drawerLogin() {
     return SingleChildScrollView(
       child: Column(
@@ -193,12 +194,8 @@ var teste;
                     color: Colors.orange,
                     child: Text("Entrar"),
                     onPressed: () {
-                     setState(() {
-                        teste = login();
-                        AlertDialog(
-                          title: Text("Promoção Imperdivel"),
-                          content: Text(teste),
-                        );
+                      setState(() {
+                        _logado = true;
                       });
                     },
                   ),
