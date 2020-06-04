@@ -60,6 +60,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    _controllerUsuario = new TextEditingController();
+    _controllerSenha = new TextEditingController();
     return Scaffold(
       key: _customScaffoldState,
       body: _body(),
@@ -195,12 +197,11 @@ class _HomeState extends State<Home> {
                         borderRadius: BorderRadius.circular(13.0)),
                     color: Colors.orange,
                     child: Text("Entrar"),
-                    
-                    onPressed: () {
-                     
-                      setState(() {
-                      _logado = true;
-                      });
+                    onPressed: () async {
+                      String tete1 = await StateMachine.loginRota(
+                          _controllerUsuario.text.toString(),
+                          _controllerSenha.text.toString());
+                      print(tete1.toString());
                     },
                   ),
                   RaisedButton.icon(

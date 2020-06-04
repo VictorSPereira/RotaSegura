@@ -25,6 +25,47 @@ abstract class StateMachine {
     }
   }
 
+  static Future<bool> buscarEmail(email) async {
+    try {
+      print(email);
+      connectDB();
+      result = await conn.query(
+          'SELECT `email_rota` FROM `usuario` WHERE email_rota = ? LIMIT 1',
+          [email]);
+      print(result.toString());
+    } catch (Exception) {
+      print('Erro');
+      return false;
+    }
+    if (result.first.isNotEmpty) {
+      print('existe ');
+      return false;
+    } else {
+      print('nao existe');
+      return true;
+    }
+  }
+
+  static Future<bool> buscarCPF(String cpf) async {
+    try {
+      print(cpf);
+      connectDB();
+      result = await conn
+          .query("SELECT cpf_rota FROM usuario WHERE cpf_rota = ?", [cpf]);
+      print(result);
+    } catch (Exception) {
+      print('Erro na consulta do cpf');
+      return await Future.value(false);
+    }
+    if (result.first.isNotEmpty) {
+      print('existe ');
+      return await Future.value(false);
+    } else {
+      print('nao existe');
+      return await Future.value(true);
+    }
+  }
+
   static Future<Results> selectDB() async {
     connectDB();
     try {
@@ -46,32 +87,42 @@ abstract class StateMachine {
     return result;
   }
 
-  static Future<Results> registerUser(String nome, sobre, data, cpf, cep, email, senha) async {
+  static Future<Results> registerUser(
+      String nome, data, cpf, cep, email, senha) async {
     connectDB();
     var resultt;
-    print(nome);
     try {
+      connectDB();
       resultt = await conn.query(
-          "INSERT INTO `rotasegura`.`usuario` (`username_rota`, `email_rota`, `passwd_rota`, `cep_rota`, `cpf_rota`, `date_rota`, `status_rota`, `photo_rota`) VALUES (?, ?, ?, ?, ?, ?, ?, ?); ",
-     [nome, email, senha, cep, cpf, data, '1', '']
-          );
+          "INSERT INTO `rotasegura`.`usuario` (`username_rota`, `email_rota`, `passwd_rota`, `cep_rota`, `cpf_rota`, `date_rota`, `status_rota`, `photo_rota`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+          [nome, email, senha, cep, cpf, data, '1', 'default']);
     } catch (error) {
-      print("ERRO INSERÇÃO: " + error.toString());
+      return error;
     }
-    print(resultt.toString());
     return resultt;
   }
 
-  static Future<Results> loginDB() async {
-    connectDB();
+  static Future<String> loginRota(String email, pass) async {
+    
+    var resultt;
     try {
-      result = await conn.query('select * from tipo_ocorrencia');
-    } catch (Exception) {
-      print('SELECT NUMDEU!');
+      connectDB();
+      resultt = await conn.query(
+          "SELECT iddb_rota, email_rota, passwd_rota FROM usuario WHERE email_rota = 'allan-marcello@hotmail.com' and passwd_rota = 'teste'"
+        /* , [
+            email,
+            pass,
+          ]*/);
+      
+    } catch (error) {}
+    String iduser;
+    //print(resultt.toString());
+    for (var row in resultt) {
+      print('Name: ${row[0]}, email: ${row[1]}');
+      iduser = row[0].toString();
     }
-    print(result.toString());
-    return result;
+    //print(iduser);
+    return iduser;
   }
 }
- //INSERT INTO `rotasegura`.`usuario` (`iddb_rota`, `username_rota`, `email_rota`, `passwd_rota`, `cep_rota`, `cpf_rota`, `date_rota`, `status_rota`, `photo_rota`) VALUES (NULL, 'user', 'email', 'pass', '1300000', '400000', '30/01', '1', 'photo');      
-          
+//INSERT INTO `rotasegura`.`usuario` (`iddb_rota`, `username_rota`, `email_rota`, `passwd_rota`, `cep_rota`, `cpf_rota`, `date_rota`, `status_rota`, `photo_rota`) VALUES (NULL, 'user', 'email', 'pass', '1300000', '400000', '30/01', '1', 'photo');
