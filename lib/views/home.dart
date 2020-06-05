@@ -201,20 +201,34 @@ class _HomeState extends State<Home> {
                       color: Colors.orange,
                       child: Text("Entrar"),
                       onPressed: () async {
-                        idUser = await StateMachine.loginRota(
-                            _controllerUsuario.text.toString(),
-                            _controllerSenha.text.toString());
-                        print("id do usuario" + idUser.toString());
-                        if (idUser != null && idUser > 1) {
-                          setState(() {
-                            _logado = true;
-                          });
-                        }
-                        if (idUser == null || idUser == 0) {
+                        if (_controllerUsuario.text.toString() != null &&
+                            _controllerSenha.text.toString() != null) {
+                          idUser = await StateMachine.loginRota(
+                              _controllerUsuario.text.toString(),
+                              _controllerSenha.text.toString());
+                          print("id do usuario" + idUser.toString());
+                          if (idUser != null && idUser > 1) {
+                            setState(() {
+                              _logado = true;
+                            });
+                          }
+                          if (idUser == null || idUser == 0) {
+                            Flushbar(
+                              message: "Usuario ou senha invalido!!!",
+                              icon: Icon(
+                                Icons.info_outline,
+                                size: 28.0,
+                                color: Colors.red,
+                              ),
+                              duration: Duration(seconds: 5),
+                              leftBarIndicatorColor: Colors.red,
+                            )..show(context);
+                          }
+                        } else {
                           Flushbar(
-                            message: "Usuario ou senha invalido!!!",
+                            message: "Insira o email e senha !",
                             icon: Icon(
-                              Icons.info_outline,
+                              Icons.alternate_email,
                               size: 28.0,
                               color: Colors.red,
                             ),
@@ -231,7 +245,7 @@ class _HomeState extends State<Home> {
                     label: Text('Facebook'),
                     onPressed: () {
                       setState(() {
-                        // _logado = true;
+                         _logado = true;
                       });
                     },
                   ),
@@ -339,16 +353,17 @@ class _HomeState extends State<Home> {
           setState(() {
             _logado = false;
             idUser = 0;
-              Flushbar(
-                            message: "Tchau ate a proxima !!",
-                            icon: Icon(
-                              Icons.favorite,
-                              size: 28.0,
-                              color: Colors.red,
-                            ),
-                            duration: Duration(seconds: 5),
-                            leftBarIndicatorColor: Colors.orange[200],
-                          )..show(context);
+            Flushbar(
+              message: "Tcháu ate a proxima !!",
+              //
+              icon: Icon(
+                Icons.favorite,
+                size: 28.0,
+                color: Colors.red,
+              ),
+              duration: Duration(seconds: 5),
+              leftBarIndicatorColor: Colors.orange[200],
+            )..show(context);
           });
         },
       ),

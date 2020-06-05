@@ -1,6 +1,7 @@
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:rotasegura/helpers/stateMachine.dart';
+import 'package:rotasegura/views/home.dart';
 import 'package:rotasegura/widgets/CustomTextFormField.dart';
 import 'package:date_format/date_format.dart';
 import 'package:cpfcnpj/cpfcnpj.dart';
@@ -108,7 +109,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
               },
             ),
             CustomTextFormField.textFormField(
-                controller: _controllerCpf, label: "CPF"),
+                controller: _controllerCpf, label: "CPF", keyboard: TextInputType.number),
             CustomTextFormField.textformCepField(
                 controller: _controllerCep, label: "CEP"),
             CustomTextFormField.textFormField(
@@ -128,31 +129,71 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                   borderRadius: BorderRadius.circular(13.0)),
               color: Colors.orange,
               child: Text("Cadastrar"),
-              onPressed: () {
+              onPressed: () async {
+                String dataNasc = _data.day.toString() +
+                    '/' +
+                    _data.month.toString() +
+                    '/' +
+                    _data.year.toString();
+                String nome = _controllerNome.text.toString() +
+                    ' ' +
+                    _controllerSobrenome.text.toString();
                 if (CPF.isValid(CPF.format(_controllerCpf.text.toString()))) {
-                  //print("Este CPF é válido.");
-                  String dataNasc = _data.day.toString() +
-                      '/' +
-                      _data.month.toString() +
-                      '/' +
-                      _data.year.toString();
                   final bool emailValido =
                       EmailValidator.validate(_controllerEmail.text.toString());
                   if (emailValido) {
-                    if (_controllerSenha.text ==
-                        _controllerConfirmeSenha.text) {
-                      String nome = _controllerNome.text.toLowerCase() +
-                          ' ' +
-                          _controllerSobrenome.text.toString();
-                      StateMachine.registerUser(
-                          nome.toString().replaceAll(RegExp('     '), ' '),
-                          dataNasc.toString(),
-                          _controllerCpf.text.toString(),
-                          _controllerCep.text
-                              .toString()
-                              .replaceAll(RegExp('-'), ''),
-                          _controllerEmail.text.toString(),
-                          _controllerSenha.text.toString());
+                    if (_controllerSenha.text.toString() ==
+                        _controllerConfirmeSenha.text.toString()) {
+                      bool testCPF = await StateMachine.buscarCPF(
+                          _controllerCpf.text.toString());
+                      if (!testCPF) {
+                        bool testEmail = await StateMachine.buscarEmail(
+                            _controllerEmail.text.toString());
+                        if (!testEmail) {
+                          StateMachine.registerUser(
+                              //nome.toString().replaceAll(RegExp('     '),' '), // arrumar variavel nome
+                              nome.toString().replaceAll('     ', ' '),
+                              dataNasc.toString(), // arrumar variavel data
+                              _controllerCpf.text.toString(),
+                              _controllerCep.text
+                                  .toString()
+                                  .replaceAll(RegExp('-'), ''),
+                              _controllerEmail.text.toString(),
+                              _controllerSenha.text.toString());
+                          Flushbar(
+                            message: "Cadastro realizado com sucesso",
+                            icon: Icon(
+                              Icons.flag,
+                              size: 28.0,
+                              color: Colors.blue[400],
+                            ),
+                            duration: Duration(seconds: 5),
+                            leftBarIndicatorColor: Colors.red,
+                          )..show(context);
+                        } else {
+                          Flushbar(
+                            message: "Email já cadastrado",
+                            icon: Icon(
+                              Icons.info_outline,
+                              size: 28.0,
+                              color: Colors.red,
+                            ),
+                            duration: Duration(seconds: 5),
+                            leftBarIndicatorColor: Colors.red,
+                          )..show(context);
+                        }
+                      } else {
+                        Flushbar(
+                          message: "CPF já cadastrado",
+                          icon: Icon(
+                            Icons.info_outline,
+                            size: 28.0,
+                            color: Colors.red,
+                          ),
+                          duration: Duration(seconds: 5),
+                          leftBarIndicatorColor: Colors.red,
+                        )..show(context);
+                      }
                     } else {
                       Flushbar(
                         message: "A senha não confere.",
@@ -166,7 +207,6 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                       )..show(context);
                     }
                   } else {
-                    //print("Este CPF é inválido.");
                     Flushbar(
                       message: "Email Invalido",
                       icon: Icon(
@@ -179,7 +219,6 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                     )..show(context);
                   }
                 } else {
-                  //print("Este CPF é inválido.");
                   Flushbar(
                     message: "Este CPF é inválido.",
                     icon: Icon(
@@ -193,24 +232,6 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                 }
               },
             ),
-            RaisedButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(13.0)),
-                color: Colors.orange,
-                child: Text("Buscar"),
-                onPressed: () async {
-
-                  bool intTest = await StateMachine.buscarCPF(_controllerCpf.text.toString());
-                  print(intTest);
-                   /*if(intTest){
-print('true if');
-                   }else{
-                     print('false');
-                   }*/
-                      
-                     
-                })
-                
           ],
         ),
       ),

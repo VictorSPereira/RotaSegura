@@ -25,24 +25,23 @@ abstract class StateMachine {
     }
   }
 
-  static Future<bool> buscarEmail(email) async {
+static Future<bool> buscarEmail(String email) async {
     try {
       print(email);
       connectDB();
-      result = await conn.query(
-          'SELECT `email_rota` FROM `usuario` WHERE email_rota = ? LIMIT 1',
-          [email]);
-      print(result.toString());
+      result = await conn
+          .query("SELECT email_rota FROM usuario WHERE email_rota = ?", [email]);
+      print(result);
     } catch (Exception) {
-      print('Erro');
-      return false;
+      print('Erro na consulta do email');
+      return await Future.value(true);
     }
-    if (result.first.isNotEmpty) {
+    if (result != null && result.isNotEmpty) {
       print('existe ');
-      return false;
+      return await Future.value(true);
     } else {
       print('nao existe');
-      return true;
+      return await Future.value(false);
     }
   }
 
@@ -55,14 +54,14 @@ abstract class StateMachine {
       print(result);
     } catch (Exception) {
       print('Erro na consulta do cpf');
-      return await Future.value(false);
+      return await Future.value(true);
     }
-    if (result.first.isNotEmpty) {
+    if (result != null && result.isNotEmpty) {
       print('existe ');
-      return await Future.value(false);
+      return await Future.value(true);
     } else {
       print('nao existe');
-      return await Future.value(true);
+      return await Future.value(false);
     }
   }
 
@@ -103,24 +102,23 @@ abstract class StateMachine {
   }
 
   static Future<int> loginRota(String email, pass) async {
-    
     var resultt;
     try {
       connectDB();
       resultt = await conn.query(
-          "SELECT iddb_rota, email_rota, username_rota FROM usuario WHERE email_rota = ? and passwd_rota = ?"
-         , [
+          "SELECT iddb_rota, email_rota, username_rota FROM usuario WHERE email_rota = ? and passwd_rota = ?",
+          [
             email,
             pass,
           ]);
-      
     } catch (error) {}
     int iduser;
     //print(resultt.toString());
     for (var row in resultt) {
       print('Name: ${row[0]}, email: ${row[1]}');
       iduser = row[0];
-    }if(iduser == null || resultt ==null){
+    }
+    if (iduser == null || resultt == null) {
       return 0;
     }
     //print(iduser);

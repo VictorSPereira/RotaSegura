@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rotasegura/widgets/CustomTextFormField.dart';
@@ -16,6 +15,7 @@ class _PerfilState extends State<Perfil> {
   TextEditingController _controllerCpf;
   TextEditingController _controllerEmail;
   TextEditingController _controllerSenha;
+    TextEditingController _controllerSenhaConfirmar;
 
   bool _editing = false;
 
@@ -109,7 +109,7 @@ class _PerfilState extends State<Perfil> {
               CustomTextFormField.textFormField(
                   controller: _controllerCpf,
                   label: "CPF",
-                  enabled: _editing,
+                  enabled: false,
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.bold,
                   )),
@@ -121,7 +121,7 @@ class _PerfilState extends State<Perfil> {
                   )),
               CustomTextFormField.textFormField(
                   controller: _controllerEmail,
-                  enabled: _editing,
+                  enabled: false,
                   label: "E-mail",
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -135,6 +135,14 @@ class _PerfilState extends State<Perfil> {
                     fontWeight: FontWeight.bold,
                   ),
                   obscureText: true),
+              CustomTextFormField.textFormField(
+                  enabled: _editing,
+                  controller: _controllerSenhaConfirmar,
+                  label: "Confirmar senha",
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  obscureText: true),
               _editing ? _actionButtons() : SizedBox(),
             ],
           ),
@@ -142,7 +150,6 @@ class _PerfilState extends State<Perfil> {
       ),
     );
   }
-
 
   Widget _barraInformacoes() {
     return ListTile(
@@ -205,5 +212,3 @@ class _PerfilState extends State<Perfil> {
     });
   }
 }
-
-  
