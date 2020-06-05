@@ -102,24 +102,26 @@ abstract class StateMachine {
     return resultt;
   }
 
-  static Future<String> loginRota(String email, pass) async {
+  static Future<int> loginRota(String email, pass) async {
     
     var resultt;
     try {
       connectDB();
       resultt = await conn.query(
-          "SELECT iddb_rota, email_rota, passwd_rota FROM usuario WHERE email_rota = 'allan-marcello@hotmail.com' and passwd_rota = 'teste'"
-        /* , [
+          "SELECT iddb_rota, email_rota, username_rota FROM usuario WHERE email_rota = ? and passwd_rota = ?"
+         , [
             email,
             pass,
-          ]*/);
+          ]);
       
     } catch (error) {}
-    String iduser;
+    int iduser;
     //print(resultt.toString());
     for (var row in resultt) {
       print('Name: ${row[0]}, email: ${row[1]}');
-      iduser = row[0].toString();
+      iduser = row[0];
+    }if(iduser == null || resultt ==null){
+      return 0;
     }
     //print(iduser);
     return iduser;

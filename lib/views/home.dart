@@ -1,6 +1,7 @@
 import 'dart:async';
 //import 'dart:html';
 import 'package:bubble/bubble.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -37,6 +38,8 @@ class _HomeState extends State<Home> {
   bool _lista = false;
   bool _logado = false;
   bool isLoading = false;
+  int idUser = 0;
+  String nomeUser = "Usuario";
   String errorMessage;
 
   static const LatLng _center = const LatLng(-22.8822874, -47.0564147);
@@ -193,17 +196,33 @@ class _HomeState extends State<Home> {
                       obscureText: true),
                   SizedBox(height: 50),
                   RaisedButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13.0)),
-                    color: Colors.orange,
-                    child: Text("Entrar"),
-                    onPressed: () async {
-                      String tete1 = await StateMachine.loginRota(
-                          _controllerUsuario.text.toString(),
-                          _controllerSenha.text.toString());
-                      print(tete1.toString());
-                    },
-                  ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(13.0)),
+                      color: Colors.orange,
+                      child: Text("Entrar"),
+                      onPressed: () async {
+                        idUser = await StateMachine.loginRota(
+                            _controllerUsuario.text.toString(),
+                            _controllerSenha.text.toString());
+                        print("id do usuario" + idUser.toString());
+                        if (idUser != null && idUser > 1) {
+                          setState(() {
+                            _logado = true;
+                          });
+                        }
+                        if (idUser == null || idUser == 0) {
+                          Flushbar(
+                            message: "Usuario ou senha invalido!!!",
+                            icon: Icon(
+                              Icons.info_outline,
+                              size: 28.0,
+                              color: Colors.red,
+                            ),
+                            duration: Duration(seconds: 5),
+                            leftBarIndicatorColor: Colors.red,
+                          )..show(context);
+                        }
+                      }),
                   RaisedButton.icon(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(13.0)),
@@ -212,7 +231,7 @@ class _HomeState extends State<Home> {
                     label: Text('Facebook'),
                     onPressed: () {
                       setState(() {
-                        _logado = true;
+                        // _logado = true;
                       });
                     },
                   ),
@@ -224,7 +243,7 @@ class _HomeState extends State<Home> {
                     label: Text('Twitter'),
                     onPressed: () {
                       setState(() {
-                        _logado = true;
+                        // _logado = true;
                       });
                     },
                   ),
@@ -319,6 +338,17 @@ class _HomeState extends State<Home> {
         onTap: () {
           setState(() {
             _logado = false;
+            idUser = 0;
+              Flushbar(
+                            message: "Tchau ate a proxima !!",
+                            icon: Icon(
+                              Icons.favorite,
+                              size: 28.0,
+                              color: Colors.red,
+                            ),
+                            duration: Duration(seconds: 5),
+                            leftBarIndicatorColor: Colors.orange[200],
+                          )..show(context);
           });
         },
       ),
