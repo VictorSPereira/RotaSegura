@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rotasegura/custom/social_icons.dart';
 import 'package:rotasegura/helpers/stateMachine.dart';
@@ -39,13 +40,13 @@ class _HomeState extends State<Home> {
   bool isLoading = false;
   String errorMessage;
 
-  static const LatLng _center = const LatLng(-22.8822874, -47.0564147);
-  LatLng _lastMapPosition = _center;
+  static  LatLng _center;
+  LatLng _lastMapPosition = _center = LatLng(0,0);
   Address _lastMapAddress;
   static const kGoogleApiKey = "AIzaSyDW_Ui1WD1Af6M9vmtHOQhHxr0Tb4idhnw";
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
     _customScaffoldState = GlobalKey<ScaffoldState>();
     _globalKeyformCadastro = GlobalKey<FormState>();
@@ -53,8 +54,9 @@ class _HomeState extends State<Home> {
     _controllerUsuario = TextEditingController();
     _controllerSenha = TextEditingController();
 
-    _lastMapPosition = LatLng(-22.8822874, -47.0564147);
+        _lastMapPosition = LatLng(0, 0);
     StateMachine.connectDB();
+    carrega();
     //_handleTap(_lastMapPosition);
   }
 
@@ -86,8 +88,22 @@ class _HomeState extends State<Home> {
           : null,
     );
   }
+    Future<LatLng> carrega() async {
+ var geolocator = Geolocator();
+var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
 
-  void _onMapCreated(GoogleMapController controller) {
+StreamSubscription<Position> positionStream = geolocator.getPositionStream(locationOptions).listen(
+    (Position position) {
+        print(position == null ? 'Unknown' : position.latitude.toString() + ', ' + position.longitude.toString());
+      _center = LatLng(position.latitude, position.longitude);
+      print("CENTER: " + _center.toString());
+      _lastMapPosition = LatLng(position.latitude,position.longitude);
+    });
+    print("CENTER: " + _center.toString());
+    return _center;
+    }
+  void _onMapCreated(GoogleMapController controller) async {
+    _onCameraMove(CameraPosition(target: _center));
     mapController = controller;
 
     _controller.complete(controller);

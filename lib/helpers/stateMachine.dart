@@ -10,12 +10,13 @@ var settings = new ConnectionSettings(
     user: 'aaraujo',
     password: 'rota.2020',
     db: 'rotasegura');
-var conn;
+MySqlConnection conn;
 Results result;
 
 abstract class StateMachine {
   static Future<bool> connectDB() async {
     print('VOCONECTA!');
+    print(conn.toString());
     try {
       conn = await MySqlConnection.connect(settings);
       return true;
@@ -80,7 +81,7 @@ abstract class StateMachine {
   static Future<Results> insertDB() async {
     connectDB();
     try {
-      result = conn.query(
+      result = await conn.query(
           'INSERT INTO `tipo_ocorrencia`(`idtbtipoocorrencia_rota`, `tipoocorrencia_rota`) VALUES (1, "teste")');
     } catch (Exception) {}
     print(result.toString());
