@@ -38,7 +38,6 @@ class _HomeState extends State<Home> {
   bool _lista = false;
   bool _logado = false;
   bool isLoading = false;
-  int idUser = 0;
   String nomeUser = "Usuario";
   String errorMessage;
 
@@ -203,16 +202,16 @@ class _HomeState extends State<Home> {
                       onPressed: () async {
                         if (_controllerUsuario.text.toString() != null &&
                             _controllerSenha.text.toString() != null) {
-                          idUser = await StateMachine.loginRota(
+                          globals.idUser = await StateMachine.loginRota(
                               _controllerUsuario.text.toString(),
                               _controllerSenha.text.toString());
-                          print("id do usuario" + idUser.toString());
-                          if (idUser != null && idUser > 1) {
+                          print("id do usuario" +globals.idUser.toString());
+                          if (globals.idUser != null &&globals.idUser > 1) {
                             setState(() {
                               _logado = true;
                             });
                           }
-                          if (idUser == null || idUser == 0) {
+                          if (globals.idUser == null ||globals.idUser == 0) {
                             Flushbar(
                               message: "Usuario ou senha invalido!!!",
                               icon: Icon(
@@ -352,7 +351,7 @@ class _HomeState extends State<Home> {
         onTap: () {
           setState(() {
             _logado = false;
-            idUser = 0;
+           globals.idUser = 0;
             Flushbar(
               message: "Tcháu ate a proxima !!",
               //

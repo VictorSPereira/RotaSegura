@@ -1,26 +1,51 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rotasegura/widgets/CustomTextFormField.dart';
+import 'package:rotasegura/globals.dart';
+import 'package:rotasegura/helpers/stateMachine.dart';
+import 'package:flutter/src/widgets/basic.dart';
 
 class Perfil extends StatefulWidget {
   @override
   _PerfilState createState() => _PerfilState();
 }
 
+ 
 class _PerfilState extends State<Perfil> {
   final GlobalKey<FormState> _keyformPerfilUsuario = GlobalKey<FormState>();
   TextEditingController _controllerNome;
   TextEditingController _controllerSobrenome;
   TextEditingController _controllerDataNascimento;
   TextEditingController _controllerCpf;
+  TextEditingController _controllerCEP;
   TextEditingController _controllerEmail;
   TextEditingController _controllerSenha;
-    TextEditingController _controllerSenhaConfirmar;
 
   bool _editing = false;
 
   @override
   Widget build(BuildContext context) {
+    _controllerNome = new TextEditingController();
+    _controllerSobrenome = new TextEditingController();
+    _controllerDataNascimento = new TextEditingController();
+    _controllerCpf = new TextEditingController();
+    _controllerCEP = new TextEditingController();
+    _controllerEmail = new TextEditingController();
+    _controllerSenha = new TextEditingController();
+    String labelName = "Allan";
+    String labelSobre= "Marcello";
+    String labelEmail = "allan-marcello@hotmail.com";
+    int labelCPF = 42606541871;
+    String labelCEP = "13044-355";
+    String dataNAscimento = "30/04/1995";
+    /* Future <dynamic> result = StateMachine.recuveryUser(globals.idUser);
+    for (var row in result as Results) {
+      labalName = row[0].toString();
+       }
+    */
+    
+    
+
     return Scaffold(
       appBar: _appBar(),
       body: _body(),
@@ -89,6 +114,7 @@ class _PerfilState extends State<Perfil> {
                   controller: _controllerNome,
                   label: "Nome",
                   enabled: _editing,
+                  hintText:"Allan",
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.bold,
                   )),
@@ -114,7 +140,7 @@ class _PerfilState extends State<Perfil> {
                     fontWeight: FontWeight.bold,
                   )),
               CustomTextFormField.textformCepField(
-                  controller: _controllerCpf,
+                  controller: _controllerCEP,
                   enabled: _editing,
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -131,14 +157,6 @@ class _PerfilState extends State<Perfil> {
                   enabled: _editing,
                   controller: _controllerSenha,
                   label: "Senha",
-                  labelStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                  obscureText: true),
-              CustomTextFormField.textFormField(
-                  enabled: _editing,
-                  controller: _controllerSenhaConfirmar,
-                  label: "Confirmar senha",
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),

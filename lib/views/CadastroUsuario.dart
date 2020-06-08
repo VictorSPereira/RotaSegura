@@ -109,7 +109,9 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
               },
             ),
             CustomTextFormField.textFormField(
-                controller: _controllerCpf, label: "CPF", keyboard: TextInputType.number),
+                controller: _controllerCpf,
+                label: "CPF",
+                keyboard: TextInputType.number),
             CustomTextFormField.textformCepField(
                 controller: _controllerCep, label: "CEP"),
             CustomTextFormField.textFormField(
@@ -135,9 +137,6 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                     _data.month.toString() +
                     '/' +
                     _data.year.toString();
-                String nome = _controllerNome.text.toString() +
-                    ' ' +
-                    _controllerSobrenome.text.toString();
                 if (CPF.isValid(CPF.format(_controllerCpf.text.toString()))) {
                   final bool emailValido =
                       EmailValidator.validate(_controllerEmail.text.toString());
@@ -151,8 +150,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                             _controllerEmail.text.toString());
                         if (!testEmail) {
                           StateMachine.registerUser(
-                              //nome.toString().replaceAll(RegExp('     '),' '), // arrumar variavel nome
-                              nome.toString().replaceAll('     ', ' '),
+                              _controllerNome.text.toString(),
+                              _controllerSobrenome.text.toString(),
                               dataNasc.toString(), // arrumar variavel data
                               _controllerCpf.text.toString(),
                               _controllerCep.text

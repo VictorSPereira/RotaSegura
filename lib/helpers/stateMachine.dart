@@ -20,7 +20,7 @@ abstract class StateMachine {
       conn = await MySqlConnection.connect(settings);
       return true;
     } catch (Exception) {
-      print('NUMFOI!');
+      print('Erro na conexao com o banco!');
       return false;
     }
   }
@@ -86,15 +86,24 @@ static Future<bool> buscarEmail(String email) async {
     return result;
   }
 
-  static Future<Results> registerUser(
-      String nome, data, cpf, cep, email, senha) async {
+   static Future<Results> recuveryUser(id) async {
+    connectDB();
+    try {
+      result = conn.query(
+          "SELECT `username_rota`, `lastname_rota`, `email_rota`, `cep_rota`, `cpf_rota`, `date_rota` FROM `usuario` where iddb_rota = 21");//, [id]
+    } catch (Exception) {}
+    return await Future.value(result);
+  }
+
+  static Future<int> registerUser(
+      String nome,sobre, data, cpf, cep, email, senha) async {
     connectDB();
     var resultt;
     try {
       connectDB();
       resultt = await conn.query(
-          "INSERT INTO `rotasegura`.`usuario` (`username_rota`, `email_rota`, `passwd_rota`, `cep_rota`, `cpf_rota`, `date_rota`, `status_rota`, `photo_rota`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-          [nome, email, senha, cep, cpf, data, '1', 'default']);
+          "INSERT INTO `rotasegura`.`usuario` (`username_rota`, `lastname_rota` ,`email_rota`, `passwd_rota`, `cep_rota`, `cpf_rota`, `date_rota`, `status_rota`, `photo_rota`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+          [nome,sobre, email, senha, cep, cpf, data, '1', 'default']);
     } catch (error) {
       return error;
     }
