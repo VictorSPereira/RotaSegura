@@ -14,16 +14,7 @@ class CadastroUsuario extends StatefulWidget {
 
 class _CadastroUsuarioState extends State<CadastroUsuario> {
   final GlobalKey<FormState> _keyformCadastroUsuario = GlobalKey<FormState>();
-  /*var _controllerNome = TextEditingController();
-  var _controllerSobrenome = TextEditingController();
-  var _controllerDataNascimento = TextEditingController();
-  var _controllerCpf = TextEditingController();
-  var _controllerCep = TextEditingController();
-  var _controllerEmail = TextEditingController();
-  var _controllerConfirmeEmail = TextEditingController();
-  var _controllerSenha = TextEditingController();
-  var _controllerConfirmeSenha = TextEditingController();
-*/
+
   TextEditingController _controllerNome;
   TextEditingController _controllerSobrenome;
   TextEditingController _controllerCpf;
@@ -88,7 +79,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
               label: "Nome",
             ),
             CustomTextFormField.textFormField(
-                controller: _controllerSobrenome, label: "Sobrenome"),
+                controller: _controllerSobrenome, label: "Sobrenome"
+                ),
             FlatButton(
               child: new Row(children: <Widget>[
                 new Text('Data de Nascimento:  '),

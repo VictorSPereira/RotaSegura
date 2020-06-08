@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rotasegura/widgets/CustomTextFormField.dart';
+import 'package:date_format/date_format.dart';
 import 'package:rotasegura/globals.dart' as globals;
 
 class NovaOcorrencia extends StatefulWidget {
@@ -23,6 +24,7 @@ class _NovaOcorrenciaState extends State<NovaOcorrencia> {
   TextEditingController _controllerComplemento;
   TextEditingController _controllerTipo;
   TextEditingController _controllerDescricao;
+  DateTime _data = new DateTime.now();
 
   @override
   void initState() {
@@ -74,10 +76,24 @@ class _NovaOcorrenciaState extends State<NovaOcorrencia> {
         padding: const EdgeInsets.all(13.0),
         child: Column(
           children: <Widget>[
-            CustomTextFormField.textFormDataField(
-              context,
-              controller: _dataOcorrencia,
-              label: "Data da Ocorrência",
+             FlatButton(
+              child: new Row(children: <Widget>[
+                new Text('Data de Nascimento:  '),
+                new Text('${formatDate(_data, [dd, '-', mm, '-', yyyy])}'),
+                new Icon(Icons.calendar_today),
+              ]),
+              onPressed: () async {
+                final dtPick = await showDatePicker(
+                    context: context,
+                    initialDate: new DateTime.now(),
+                    firstDate: new DateTime(1900),
+                    lastDate: new DateTime(2100));
+                if (dtPick != null && dtPick != _data) {
+                  setState(() {
+                    _data = dtPick;
+                  });
+                }
+              },
             ),
             CustomTextFormField.textformCepField(controller: _controllerCep),
             CustomTextFormField.textFormField(

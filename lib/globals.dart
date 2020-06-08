@@ -7,3 +7,4 @@ final Set<Marker> points = {};
 final int flagUpgradeMap = 0;
 final Set<Address> address = {};
  int idUser = 21;
+ LatLng center = LatLng(0,0);

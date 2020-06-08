@@ -42,24 +42,30 @@ class _HomeState extends State<Home> {
   String nomeUser = "Usuario";
   String errorMessage;
 
-  static  LatLng _center;
-  LatLng _lastMapPosition = _center = LatLng(0,0);
+  static  LatLng _center = globals.center;
+  LatLng _lastMapPosition = globals.center;
   Address _lastMapAddress;
-  static const kGoogleApiKey = "AIzaSyDW_Ui1WD1Af6M9vmtHOQhHxr0Tb4idhnw";
+ // static const kGoogleApiKey = "AIzaSyDW_Ui1WD1Af6M9vmtHOQhHxr0Tb4idhnw";
 
   @override
   void initState()  {
     super.initState();
+    getCurrentLocation().then((result) {
+      setState(() {
+        print('RESULT' + result.toString());
+        _lastMapPosition = globals.center = _center = result;
+      });
+    });
+
     _customScaffoldState = GlobalKey<ScaffoldState>();
     _globalKeyformCadastro = GlobalKey<FormState>();
 
     _controllerUsuario = TextEditingController();
     _controllerSenha = TextEditingController();
+    _controllerSearch = TextEditingController();
 
-        _lastMapPosition = LatLng(0, 0);
     StateMachine.connectDB();
-    carrega();
-    //_handleTap(_lastMapPosition);
+    
   }
 
   @override
@@ -70,45 +76,85 @@ class _HomeState extends State<Home> {
       key: _customScaffoldState,
       body: _body(),
       drawer: drawerMenu(),
-      floatingActionButton: !_lista
-          ? _logado
-              ? FloatingActionButton(
-                  backgroundColor: Colors.orange,
-                  onPressed: () {
-                    navigatorTo(
-                        context: context,
-                        to: NovaOcorrencia(
-                          address: _lastMapAddress,
-                          coordinates: _lastMapPosition,
-                        ));
-                    _maps();
-                  },
-                  tooltip: 'Adicionar Delito',
-                  child: const Icon(Icons.add),
-                )
-              : null
-          : null,
+      floatingActionButton: _buttons(),
     );
   }
-    Future<LatLng> carrega() async {
- var geolocator = Geolocator();
-var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
 
-StreamSubscription<Position> positionStream = geolocator.getPositionStream(locationOptions).listen(
-    (Position position) {
-        print(position == null ? 'Unknown' : position.latitude.toString() + ', ' + position.longitude.toString());
-      _center = LatLng(position.latitude, position.longitude);
-      print("CENTER: " + _center.toString());
-      _lastMapPosition = LatLng(position.latitude,position.longitude);
-    });
-    print("CENTER: " + _center.toString());
-    return _center;
-    }
-  void _onMapCreated(GoogleMapController controller) async {
-    _onCameraMove(CameraPosition(target: _center));
+Visibility _novaOcorrenciaBT(bool visi){
+  return new Visibility(
+    visible: visi,
+    child:
+    FloatingActionButton(
+        heroTag: "nvOc",
+        backgroundColor: Colors.orange,
+        
+        onPressed: () {
+          navigatorTo(
+              context: context,
+              to: NovaOcorrencia(
+                address: _lastMapAddress,
+                coordinates: _lastMapPosition,
+              )
+            );
+            _maps();
+        },
+        tooltip: 'Adicionar Delito',
+        child: const Icon(Icons.add),
+    )
+    );
+}
+
+FloatingActionButton _gpsBT(){
+  return new FloatingActionButton(
+    heroTag: "gpsBT",
+    child: Icon(Icons.gps_fixed,color: Colors.black,),
+    backgroundColor: Colors.white70,
+    onPressed: (){
+      getCurrentLocation();
+  },);
+}
+
+Column _buttons(){
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        !_lista
+          ? _logado
+              ? _novaOcorrenciaBT(true)
+              : _novaOcorrenciaBT(false)
+          :_novaOcorrenciaBT(false) ,
+        SizedBox(height: 10,),
+        _gpsBT()
+      ]
+    );
+}
+
+   Future<LatLng> getCurrentLocation() async {
+  try{
+  Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      globals.center =  _lastMapPosition = LatLng(position.latitude, position.longitude);
+      print("GET LOCATION last" + _lastMapPosition.toString());
+      print("GET LOCATION centerG" + globals.center.toString());
+       mapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: globals.center, 
+          zoom: 15.0))
+          );
+  }catch(e){
+    print('GETCURRENT: ' + e.toString());
+  }
+      return _lastMapPosition;
+}
+void _onMapCreated(GoogleMapController controller)  {
     mapController = controller;
-
     _controller.complete(controller);
+  try{ 
+    _center == LatLng(0, 0) ? print('LatLng(0, 0)'): print('CERTO' + _center.toString());
+    mapController.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        target: _center, 
+        zoom: 15.0)));
+  }catch(e){ print('ONMAP:' + e.toString());}
   }
 
   Widget _maps() {
@@ -134,17 +180,20 @@ StreamSubscription<Position> positionStream = geolocator.getPositionStream(locat
     setState(() {
       _lastMapPosition = point;
     });
-    StateMachine.selectDB();
     var res = await Geocoder.local.findAddressesFromCoordinates(
         Coordinates(_lastMapPosition.latitude, _lastMapPosition.longitude));
     _lastMapAddress = res.first;
   }
 
   _onCameraMove(CameraPosition position) async {
+  try{
     _lastMapPosition = position.target;
     var res = await Geocoder.local.findAddressesFromCoordinates(
         Coordinates(_lastMapPosition.latitude, _lastMapPosition.longitude));
     _lastMapAddress = res.first;
+    }catch(e) {
+      print("CAMERAMOVE: " + e.toString());
+    }
   }
 
   Widget _body() {

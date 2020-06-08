@@ -90,10 +90,11 @@ static Future<bool> buscarEmail(String email) async {
    static Future<Results> recuveryUser(id) async {
     connectDB();
     try {
-      result = conn.query(
-          "SELECT `username_rota`, `lastname_rota`, `email_rota`, `cep_rota`, `cpf_rota`, `date_rota` FROM `usuario` where iddb_rota = 21");//, [id]
+      result = await conn.query(
+          "SELECT `username_rota`, `lastname_rota`, `email_rota`, `cep_rota`, `cpf_rota`, `date_rota` "
+          +"FROM `usuario` where iddb_rota = 21");//, [id]
     } catch (Exception) {}
-    return await Future.value(result);
+    return result;
   }
 
   static Future<int> registerUser(
