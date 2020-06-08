@@ -1,6 +1,7 @@
 import 'dart:async';
 //import 'dart:html';
 import 'package:bubble/bubble.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:geolocator/geolocator.dart';
@@ -38,6 +39,7 @@ class _HomeState extends State<Home> {
   bool _lista = false;
   bool _logado = false;
   bool isLoading = false;
+  String nomeUser = "Usuario";
   String errorMessage;
 
   static  LatLng _center;
@@ -209,17 +211,47 @@ StreamSubscription<Position> positionStream = geolocator.getPositionStream(locat
                       obscureText: true),
                   SizedBox(height: 50),
                   RaisedButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13.0)),
-                    color: Colors.orange,
-                    child: Text("Entrar"),
-                    onPressed: () async {
-                      String tete1 = await StateMachine.loginRota(
-                          _controllerUsuario.text.toString(),
-                          _controllerSenha.text.toString());
-                      print(tete1.toString());
-                    },
-                  ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(13.0)),
+                      color: Colors.orange,
+                      child: Text("Entrar"),
+                      onPressed: () async {
+                        if (_controllerUsuario.text.toString() != null &&
+                            _controllerSenha.text.toString() != null) {
+                          globals.idUser = await StateMachine.loginRota(
+                              _controllerUsuario.text.toString(),
+                              _controllerSenha.text.toString());
+                          print("id do usuario" +globals.idUser.toString());
+                          if (globals.idUser != null &&globals.idUser > 1) {
+                            setState(() {
+                              _logado = true;
+                            });
+                          }
+                          if (globals.idUser == null ||globals.idUser == 0) {
+                            Flushbar(
+                              message: "Usuario ou senha invalido!!!",
+                              icon: Icon(
+                                Icons.info_outline,
+                                size: 28.0,
+                                color: Colors.red,
+                              ),
+                              duration: Duration(seconds: 5),
+                              leftBarIndicatorColor: Colors.red,
+                            )..show(context);
+                          }
+                        } else {
+                          Flushbar(
+                            message: "Insira o email e senha !",
+                            icon: Icon(
+                              Icons.alternate_email,
+                              size: 28.0,
+                              color: Colors.red,
+                            ),
+                            duration: Duration(seconds: 5),
+                            leftBarIndicatorColor: Colors.red,
+                          )..show(context);
+                        }
+                      }),
                   RaisedButton.icon(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(13.0)),
@@ -228,7 +260,7 @@ StreamSubscription<Position> positionStream = geolocator.getPositionStream(locat
                     label: Text('Facebook'),
                     onPressed: () {
                       setState(() {
-                        _logado = true;
+                         _logado = true;
                       });
                     },
                   ),
@@ -240,7 +272,7 @@ StreamSubscription<Position> positionStream = geolocator.getPositionStream(locat
                     label: Text('Twitter'),
                     onPressed: () {
                       setState(() {
-                        _logado = true;
+                        // _logado = true;
                       });
                     },
                   ),
@@ -335,6 +367,18 @@ StreamSubscription<Position> positionStream = geolocator.getPositionStream(locat
         onTap: () {
           setState(() {
             _logado = false;
+           globals.idUser = 0;
+            Flushbar(
+              message: "Tcháu ate a proxima !!",
+              //
+              icon: Icon(
+                Icons.favorite,
+                size: 28.0,
+                color: Colors.red,
+              ),
+              duration: Duration(seconds: 5),
+              leftBarIndicatorColor: Colors.orange[200],
+            )..show(context);
           });
         },
       ),

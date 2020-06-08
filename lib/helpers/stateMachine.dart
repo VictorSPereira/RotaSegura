@@ -21,29 +21,28 @@ abstract class StateMachine {
       conn = await MySqlConnection.connect(settings);
       return true;
     } catch (Exception) {
-      print('NUMFOI!');
+      print('Erro na conexao com o banco!');
       return false;
     }
   }
 
-  static Future<bool> buscarEmail(email) async {
+static Future<bool> buscarEmail(String email) async {
     try {
       print(email);
       connectDB();
-      result = await conn.query(
-          'SELECT `email_rota` FROM `usuario` WHERE email_rota = ? LIMIT 1',
-          [email]);
-      print(result.toString());
+      result = await conn
+          .query("SELECT email_rota FROM usuario WHERE email_rota = ?", [email]);
+      print(result);
     } catch (Exception) {
-      print('Erro');
-      return false;
+      print('Erro na consulta do email');
+      return await Future.value(true);
     }
-    if (result.first.isNotEmpty) {
+    if (result != null && result.isNotEmpty) {
       print('existe ');
-      return false;
+      return await Future.value(true);
     } else {
       print('nao existe');
-      return true;
+      return await Future.value(false);
     }
   }
 
@@ -56,14 +55,14 @@ abstract class StateMachine {
       print(result);
     } catch (Exception) {
       print('Erro na consulta do cpf');
-      return await Future.value(false);
+      return await Future.value(true);
     }
-    if (result.first.isNotEmpty) {
+    if (result != null && result.isNotEmpty) {
       print('existe ');
-      return await Future.value(false);
+      return await Future.value(true);
     } else {
       print('nao existe');
-      return await Future.value(true);
+      return await Future.value(false);
     }
   }
 
@@ -88,39 +87,49 @@ abstract class StateMachine {
     return result;
   }
 
-  static Future<Results> registerUser(
-      String nome, data, cpf, cep, email, senha) async {
+   static Future<Results> recuveryUser(id) async {
+    connectDB();
+    try {
+      result = conn.query(
+          "SELECT `username_rota`, `lastname_rota`, `email_rota`, `cep_rota`, `cpf_rota`, `date_rota` FROM `usuario` where iddb_rota = 21");//, [id]
+    } catch (Exception) {}
+    return await Future.value(result);
+  }
+
+  static Future<int> registerUser(
+      String nome,sobre, data, cpf, cep, email, senha) async {
     connectDB();
     var resultt;
     try {
       connectDB();
       resultt = await conn.query(
-          "INSERT INTO `rotasegura`.`usuario` (`username_rota`, `email_rota`, `passwd_rota`, `cep_rota`, `cpf_rota`, `date_rota`, `status_rota`, `photo_rota`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-          [nome, email, senha, cep, cpf, data, '1', 'default']);
+          "INSERT INTO `rotasegura`.`usuario` (`username_rota`, `lastname_rota` ,`email_rota`, `passwd_rota`, `cep_rota`, `cpf_rota`, `date_rota`, `status_rota`, `photo_rota`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+          [nome,sobre, email, senha, cep, cpf, data, '1', 'default']);
     } catch (error) {
       return error;
     }
     return resultt;
   }
 
-  static Future<String> loginRota(String email, pass) async {
-    
+  static Future<int> loginRota(String email, pass) async {
     var resultt;
     try {
       connectDB();
       resultt = await conn.query(
-          "SELECT iddb_rota, email_rota, passwd_rota FROM usuario WHERE email_rota = 'allan-marcello@hotmail.com' and passwd_rota = 'teste'"
-        /* , [
+          "SELECT iddb_rota, email_rota, username_rota FROM usuario WHERE email_rota = ? and passwd_rota = ?",
+          [
             email,
             pass,
-          ]*/);
-      
+          ]);
     } catch (error) {}
-    String iduser;
+    int iduser;
     //print(resultt.toString());
     for (var row in resultt) {
       print('Name: ${row[0]}, email: ${row[1]}');
-      iduser = row[0].toString();
+      iduser = row[0];
+    }
+    if (iduser == null || resultt == null) {
+      return 0;
     }
     //print(iduser);
     return iduser;
