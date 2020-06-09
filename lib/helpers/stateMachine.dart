@@ -1,6 +1,7 @@
 import 'dart:async';
-
+import 'package:rotasegura/globals.dart' as globals;
 import 'package:mysql1/mysql1.dart';
+import 'package:rotasegura/helpers/user.dart';
 
 const timeout = const Duration(seconds: 3);
 const ms = const Duration(milliseconds: 1);
@@ -89,11 +90,22 @@ static Future<bool> buscarEmail(String email) async {
 
    static Future<Results> recuveryUser(id) async {
     connectDB();
+    String nome, sobre, email, cep, cpf, data;
     try {
       result = await conn.query(
           "SELECT `username_rota`, `lastname_rota`, `email_rota`, `cep_rota`, `cpf_rota`, `date_rota` "
           +"FROM `usuario` where iddb_rota = 21");//, [id]
     } catch (Exception) {}
+    for ( var row in result){
+      nome = row[0];
+      sobre = row[1];
+      email = row[2];
+      cep = row[3];
+      cpf = row[4];
+      data = row[5];
+    }
+    globals.usuario = new User(21, nome, email, sobre, cpf, cep, data, 1, '1');
+    print(result.first.toString());
     return result;
   }
 

@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart' as msql;
 import 'package:rotasegura/widgets/CustomTextFormField.dart';
-import 'package:rotasegura/globals.dart';
+import 'package:rotasegura/globals.dart' as globals;
 import 'package:rotasegura/helpers/stateMachine.dart';
 import 'package:flutter/src/widgets/basic.dart';
 
@@ -38,12 +39,8 @@ class _PerfilState extends State<Perfil> {
     int labelCPF = 42606541871;
     String labelCEP = "13044-355";
     String dataNAscimento = "30/04/1995";
-    /* Future <dynamic> result = StateMachine.recuveryUser(globals.idUser);
-    for (var row in result as Results) {
-      labalName = row[0].toString();
-       }
-    */
-    
+ 
+    StateMachine.recuveryUser(21);
     
 
     return Scaffold(
