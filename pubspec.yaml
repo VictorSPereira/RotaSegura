@@ -31,6 +31,11 @@ dependencies:
   flutter_google_places_autocomplete: any
   flutter_google_places: ^0.2.5
   bubble: ^1.1.9+1
+  date_format: ^1.0.4
+  cpfcnpj: ^1.0.3 #valida cpf
+  flushbar: ^1.10.4 #notificao inferior
+  email_validator: ^1.0.4 #validador de email
+  geolocator: ^5.3.2+2
 
 dev_dependencies:
   flutter_launcher_icons: "^0.7.5"

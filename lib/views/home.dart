@@ -1,8 +1,10 @@
 import 'dart:async';
 //import 'dart:html';
 import 'package:bubble/bubble.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rotasegura/custom/social_icons.dart';
 import 'package:rotasegura/helpers/stateMachine.dart';
@@ -37,58 +39,122 @@ class _HomeState extends State<Home> {
   bool _lista = false;
   bool _logado = false;
   bool isLoading = false;
+  String nomeUser = "Usuario";
   String errorMessage;
 
-  static const LatLng _center = const LatLng(-22.8822874, -47.0564147);
-  LatLng _lastMapPosition = _center;
+  static  LatLng _center = globals.center;
+  LatLng _lastMapPosition = globals.center;
   Address _lastMapAddress;
-  static const kGoogleApiKey = "AIzaSyDW_Ui1WD1Af6M9vmtHOQhHxr0Tb4idhnw";
+ // static const kGoogleApiKey = "AIzaSyDW_Ui1WD1Af6M9vmtHOQhHxr0Tb4idhnw";
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
+    getCurrentLocation().then((result) {
+      setState(() {
+        print('RESULT' + result.toString());
+        _lastMapPosition = globals.center = _center = result;
+      });
+    });
+
     _customScaffoldState = GlobalKey<ScaffoldState>();
     _globalKeyformCadastro = GlobalKey<FormState>();
 
     _controllerUsuario = TextEditingController();
     _controllerSenha = TextEditingController();
+    _controllerSearch = TextEditingController();
 
-    _lastMapPosition = LatLng(-22.8822874, -47.0564147);
     StateMachine.connectDB();
-    //_handleTap(_lastMapPosition);
+    
   }
 
   @override
   Widget build(BuildContext context) {
+    _controllerUsuario = new TextEditingController();
+    _controllerSenha = new TextEditingController();
     return Scaffold(
       key: _customScaffoldState,
       body: _body(),
       drawer: drawerMenu(),
-      floatingActionButton: !_lista
-          ? _logado
-              ? FloatingActionButton(
-                  backgroundColor: Colors.orange,
-                  onPressed: () {
-                    navigatorTo(
-                        context: context,
-                        to: NovaOcorrencia(
-                          address: _lastMapAddress,
-                          coordinates: _lastMapPosition,
-                        ));
-                    _maps();
-                  },
-                  tooltip: 'Adicionar Delito',
-                  child: const Icon(Icons.add),
-                )
-              : null
-          : null,
+      floatingActionButton: _buttons(),
     );
   }
 
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
+Visibility _novaOcorrenciaBT(bool visi){
+  return new Visibility(
+    visible: visi,
+    child:
+    FloatingActionButton(
+        heroTag: "nvOc",
+        backgroundColor: Colors.orange,
+        
+        onPressed: () {
+          navigatorTo(
+              context: context,
+              to: NovaOcorrencia(
+                address: _lastMapAddress,
+                coordinates: _lastMapPosition,
+              )
+            );
+            _maps();
+        },
+        tooltip: 'Adicionar Delito',
+        child: const Icon(Icons.add),
+    )
+    );
+}
 
+FloatingActionButton _gpsBT(){
+  return new FloatingActionButton(
+    heroTag: "gpsBT",
+    child: Icon(Icons.gps_fixed,color: Colors.black,),
+    backgroundColor: Colors.white70,
+    onPressed: (){
+      getCurrentLocation();
+  },);
+}
+
+Column _buttons(){
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        !_lista
+          ? _logado
+              ? _novaOcorrenciaBT(true)
+              : _novaOcorrenciaBT(false)
+          :_novaOcorrenciaBT(false) ,
+        SizedBox(height: 10,),
+        _gpsBT()
+      ]
+    );
+}
+
+   Future<LatLng> getCurrentLocation() async {
+  try{
+  Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      globals.center =  _lastMapPosition = LatLng(position.latitude, position.longitude);
+      print("GET LOCATION last" + _lastMapPosition.toString());
+      print("GET LOCATION centerG" + globals.center.toString());
+       mapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: globals.center, 
+          zoom: 15.0))
+          );
+  }catch(e){
+    print('GETCURRENT: ' + e.toString());
+  }
+      return _lastMapPosition;
+}
+void _onMapCreated(GoogleMapController controller)  {
+    mapController = controller;
     _controller.complete(controller);
+  try{ 
+    _center == LatLng(0, 0) ? print('LatLng(0, 0)'): print('CERTO' + _center.toString());
+    mapController.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        target: _center, 
+        zoom: 15.0)));
+  }catch(e){ print('ONMAP:' + e.toString());}
   }
 
   Widget _maps() {
@@ -114,17 +180,20 @@ class _HomeState extends State<Home> {
     setState(() {
       _lastMapPosition = point;
     });
-    StateMachine.selectDB();
     var res = await Geocoder.local.findAddressesFromCoordinates(
         Coordinates(_lastMapPosition.latitude, _lastMapPosition.longitude));
     _lastMapAddress = res.first;
   }
 
   _onCameraMove(CameraPosition position) async {
+  try{
     _lastMapPosition = position.target;
     var res = await Geocoder.local.findAddressesFromCoordinates(
         Coordinates(_lastMapPosition.latitude, _lastMapPosition.longitude));
     _lastMapAddress = res.first;
+    }catch(e) {
+      print("CAMERAMOVE: " + e.toString());
+    }
   }
 
   Widget _body() {
@@ -191,18 +260,47 @@ class _HomeState extends State<Home> {
                       obscureText: true),
                   SizedBox(height: 50),
                   RaisedButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13.0)),
-                    color: Colors.orange,
-                    child: Text("Entrar"),
-                    
-                    onPressed: () {
-                     
-                      setState(() {
-                      _logado = true;
-                      });
-                    },
-                  ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(13.0)),
+                      color: Colors.orange,
+                      child: Text("Entrar"),
+                      onPressed: () async {
+                        if (_controllerUsuario.text.toString() != null &&
+                            _controllerSenha.text.toString() != null) {
+                          globals.idUser = await StateMachine.loginRota(
+                              _controllerUsuario.text.toString(),
+                              _controllerSenha.text.toString());
+                          print("id do usuario" +globals.idUser.toString());
+                          if (globals.idUser != null &&globals.idUser > 1) {
+                            setState(() {
+                              _logado = true;
+                            });
+                          }
+                          if (globals.idUser == null ||globals.idUser == 0) {
+                            Flushbar(
+                              message: "Usuario ou senha invalido!!!",
+                              icon: Icon(
+                                Icons.info_outline,
+                                size: 28.0,
+                                color: Colors.red,
+                              ),
+                              duration: Duration(seconds: 5),
+                              leftBarIndicatorColor: Colors.red,
+                            )..show(context);
+                          }
+                        } else {
+                          Flushbar(
+                            message: "Insira o email e senha !",
+                            icon: Icon(
+                              Icons.alternate_email,
+                              size: 28.0,
+                              color: Colors.red,
+                            ),
+                            duration: Duration(seconds: 5),
+                            leftBarIndicatorColor: Colors.red,
+                          )..show(context);
+                        }
+                      }),
                   RaisedButton.icon(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(13.0)),
@@ -211,7 +309,7 @@ class _HomeState extends State<Home> {
                     label: Text('Facebook'),
                     onPressed: () {
                       setState(() {
-                        _logado = true;
+                         _logado = true;
                       });
                     },
                   ),
@@ -223,7 +321,7 @@ class _HomeState extends State<Home> {
                     label: Text('Twitter'),
                     onPressed: () {
                       setState(() {
-                        _logado = true;
+                        // _logado = true;
                       });
                     },
                   ),
@@ -318,6 +416,18 @@ class _HomeState extends State<Home> {
         onTap: () {
           setState(() {
             _logado = false;
+           globals.idUser = 0;
+            Flushbar(
+              message: "Tcháu ate a proxima !!",
+              //
+              icon: Icon(
+                Icons.favorite,
+                size: 28.0,
+                color: Colors.red,
+              ),
+              duration: Duration(seconds: 5),
+              leftBarIndicatorColor: Colors.orange[200],
+            )..show(context);
           });
         },
       ),
